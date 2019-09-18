@@ -17,6 +17,8 @@ height=930
 size = (width, height)
 stench = pygame.image.load(r'/home/anika/Downloads/stench.jpg')
 breeze = pygame.image.load(r'/home/anika/Downloads/breeze.png')
+wumpus = pygame.image.load(r'/home/anika/Downloads/wumpus.png')
+gold = pygame.image.load(r'/home/anika/Downloads/gold.png')
 screen = pygame.display.set_mode(size)
 pygame.init()
 #pygame.display.update()
@@ -29,14 +31,9 @@ def makegui(board):
 			pygame.draw.rect(screen, khaki, (c*rectangleWidth, r*rectangleHeight+rectangleHeight, rectangleWidth, rectangleHeight))
 			pygame.draw.rect(screen, darkOliveGreen, (c*rectangleWidth-1, r*rectangleHeight+rectangleHeight-1, rectangleWidth-1, rectangleHeight-1))
 			screen.blit(stench, (c*rectangleWidth, r*rectangleHeight+rectangleHeight)) 
-			screen.blit(breeze, ((c*rectangleWidth)+60, (r*rectangleHeight+rectangleHeight)+60)) 
-	'''for c in range(columns):
-		for r in range(rows):		
-			if board[r][c] == player_1:
-				pygame.draw.circle(screen, red, (int(c*rectangleWidth+rectangleWidth/2), height-int(r*rectangleHeight+rectangleHeight/2)), radius)
-			elif board[r][c] == player_2: 
-				pygame.draw.circle(screen, blue, (int(c*rectangleWidth+rectangleWidth/2), height-int(r*rectangleHeight+rectangleHeight/2)), radius)'''
-	
+			screen.blit(breeze, ((c*rectangleWidth)+70, (r*rectangleHeight+rectangleHeight)+60)) 
+	screen.blit(wumpus, ((5*rectangleWidth)+30, (4*rectangleHeight+rectangleHeight)+30))
+	screen.blit(gold, ((9*rectangleWidth)+30, (9*rectangleHeight+rectangleHeight)+30)) 
 	pygame.display.update()
 board = initialization()
 makegui(board)
