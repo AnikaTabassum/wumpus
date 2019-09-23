@@ -1,3 +1,4 @@
+
 class Knowledgebase:
 
 	def calling(self):
@@ -164,6 +165,7 @@ x = range(9, 6)
 
 for n in x:
   	print(n)
+print(moveStack[0])
 #lastX=moveStack[len(moveStack)-1][0]
 #print("pathMap ", len(moveStack)-1)
 Knowledgebase().calling()
