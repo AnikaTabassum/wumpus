@@ -1,37 +1,59 @@
 import pygame
-from Game import Game
+import math
+import sys
 from KnowledgeBase import KnowledgeBase
 from WumpusWorldGenerator import WumpusWorldGenerator
-class Agent:
-	def start(self,game):
-		game=game
-		KnowledgeBase.registerMove(position[0],position[1])
+class Agent():
+
+	def __init__(self):
+		print("Agent initiaated")
+		self.knowledgeBase=""
+		self.LEFT=int(0)
+		self.RIGHT=int(1)
+		self.position=[0,0]
+		self.direction=""
+		self.breeze = False;
+		self.bump=False
+		self.died=False
+		self.stench = False;
+		self.scream = False;
+		self.haveGold   = False;
+		self.glimmer= False;
+		self.game=""
+		self.quiver=WumpusWorldGenerator().numWmpi		
+		self.quiver=1
+	def start(self,Game):
+		self.game=Game
+		self.knowledgeBase=KnowledgeBase()
+		self.direction=self.knowledgeBase.NORTH
+		print("position ",self.position[0],",",self.position[1])
+		self.knowledgeBase.registerMove(self.position[0],self.position[1])
 		while True:
 			self.infer()
 
 	def move(self):
-		if Game.moveAgent():
-			KnowledgeBase.tellBump(position[0],position[1],direction)
+		if self.game.moveAgent():
+			self.knowledgeBase.tellBump(self.position[0],self.position[1],self.direction)
 			return 
-		x=int(position[0])
-		y=int(position[1])
+		x=int(self.position[0])
+		y=int(self.position[1])
 
-		KnowledgeBase.registerMove(x,y)
+		self.knowledgeBase.registerMove(x,y)
 		self.processPercepts(x,y)
 
 	def processPercepts(self,x,y):
-		if glimmer:
-			KnowledgeBase.tellGlimmer(x,y)
-		if not breeze and not stench:
-			KnowledgeBase.tellClear(x,y)
-		if breeze:
-			KnowledgeBase.tellBreeze(x,y)
-		if stench:
-			KnowledgeBase.tellStench(x,y)
+		if self.glimmer:
+			self.knowledgeBase.tellGlimmer(x,y)
+		if not self.breeze and not self.stench:
+			self.knowledgeBase.tellClear(x,y)
+		if self.breeze:
+			self.knowledgeBase.tellBreeze(x,y)
+		if self.stench:
+			self.knowledgeBase.tellStench(x,y)
 
 	def turn(self, direction):
-		Game.turnAgent(direction)
-		KnowledgeBase.registerTurn(direction)
+		self.game.turnAgent(direction)
+		self.knowledgeBase.registerTurn(direction)
 
 	def shoot(self):
 		quiver-=1
@@ -39,7 +61,7 @@ class Agent:
 		self.processPercepts(position[0], position[1])
 
 	def pickUp(self):
-		Game.agentGrabsGold()
+		self.game.agentGrabsGold()
 		print("agent picked up the gold")
 
 	def backTrack(self, moveStack,riskFactor):
@@ -47,10 +69,10 @@ class Agent:
 		if i<0:
 			return False
 
-		cell= KnowledgeBase.moveStack[i]
+		cell= self.knowledgeBase.moveStack[i]
 		print("Backtracking to [",cell[0],", ",cell[1],"]")
-		tempMoveStack=KnowledgeBase.moveStack
-		tempTurnStack=KnowledgeBase.turnStack
+		tempMoveStack=self.knowledgeBase.moveStack
+		tempTurnStack=self.knowledgeBase.turnStack
 		print("moveStack size ", len(tempMoveStack), "tempTurnStack size ", len(tempTurnStack))
 
 		try:
@@ -58,10 +80,10 @@ class Agent:
 			self.turn(LEFT)
 			self.move()
 
-			while position[0]!= cell[0] or position[1]!= cell[1]:
+			while self.position[0]!= cell[0] or self.position[1]!= cell[1]:
 				nextMove=tempMoveStack[len(tempTurnStack)-1]
-				if position[0]+direction[0]== nextMove[0] and \
-				position[1]+ direction[1]= nextMove[1]:
+				if self.position[0]+direction[0]== nextMove[0] and \
+				self.position[1]+ direction[1]==nextMove[1]:
 					self.move()
 					tempMoveStack.remove(tempMoveStack[len(tempMoveStack)-1])
 				else:
@@ -79,23 +101,128 @@ class Agent:
 
 	def lookback(self, riskFactor):
 		##eita likhbo
+		for i in range(len(self.knowledgeBase.moveStack)-1):
+			m=self.knowledgeBase.moveStack[i]
+			for d in self.knowledgeBase.DIRECTIONS:
+				x=int(m[0]+d[0])
+				y=int(m[1]+d[1])
+
+				if self.knowledgeBase.askPath(x,y) ==0 and self.knowledgeBase.askObstacle(x,y)<=0:
+					if self.knowledgeBase.askWumpus(x,y)+self.knowledgeBase.askPit(x,y)<=riskFactor:
+						print("Lookback succeded")
+						return i
+		print("Lookback failed")
+		return -1
+
 
 
 	def infer(self):
 
 		###eita most important
 
+		try:
+			if self.knowledgeBase.askGlimmer(self.position[0],self.position[1]):
+				self.pickUp()
+				return 
+		except Exception as error:
+			print('Caught this error: ' + repr(error))
 
-LEFT=int(0)
-RIGHT=int(1)
-position=[]
-direction=KnowledgeBase.NORTH
-breeze = False;
-bump=False
-died=False
-stench = False;
-scream = False;
-haveGold   = False;
-glimmer= False;
+		riskFactor=int(-2)
+		while True:
+			print("infer()\n\tpos:[", self.position[0],",",self.position[1],"[\n\tdirection:{",\
+				self.direction[0],",",self.direction[1],"}\n\triskFactor",riskFactor)
+			forwardScore=sys.maxsize
+			leftScore=sys.maxsize
+			rightScore=sys.maxsize
+			if self.direction==self.knowledgeBase.NORTH:
+				forwardScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askPit(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askObstacle(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askPath(self.position[0], self.position[1]+1)
 
-quiver=WumpusWorldGenerator.numWmpi
+				rightScore=self.knowledgeBase.askWumpus(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askPit(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askObstacle(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askPath(self.position[0]+1, self.position[1])
+
+				leftScore=self.knowledgeBase.askWumpus(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askPit(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askObstacle(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askPath(self.position[0]-1, self.position[1])
+			elif direction==self.knowledgeBase.SOUTH:
+				forwardScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askPit(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askObstacle(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askPath(self.position[0], self.position[1]-1)
+
+				rightScore=self.knowledgeBase.askWumpus(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askPit(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askObstacle(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askPath(self.position[0]-1, self.position[1])
+
+				leftScore=self.knowledgeBase.askWumpus(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askPit(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askObstacle(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askPath(self.position[0]+1, self.position[1])
+
+			elif self.direction==self.knowledgeBase.EAST:
+				forwardScore=self.knowledgeBase.askWumpus(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askPit(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askObstacle(self.position[0]+1, self.position[1])+\
+				self.knowledgeBase.askPath(self.position[0]+1, self.position[1])
+
+				rightScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askPit(self.position[0], self.self.position[1]-1)+\
+				self.knowledgeBase.askObstacle(self.position[0], vposition[1]-1)+\
+				self.knowledgeBase.askPath(self.position[0], self.position[1]-1)
+
+				leftScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askPit(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askObstacle(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askPath(self.position[0], self.position[1]+1)
+
+			elif self.direction==self.knowledgeBase.WEST:
+				forwardScore=self.knowledgeBase.askWumpus(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askPit(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askObstacle(self.position[0]-1, self.position[1])+\
+				self.knowledgeBase.askPath(self.position[0]-1, self.position[1])
+
+				rightScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askPit(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askObstacle(self.position[0], self.position[1]+1)+\
+				self.knowledgeBase.askPath(position[0], position[1]+1)
+
+				leftScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askPit(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askObstacle(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askPath(self.position[0], self.position[1]-1)
+
+			else:
+				print("Direction din not match in infer()")
+
+		print("\tforwardDanger: ", forwardScore, "\n\trightDanger: ", rightScore, "\n\tleftDanger: ",leftScore)
+
+		if forwardScore<=riskFactor and forwardScore<=leftScore and forwardScore<=rightScore:
+			self.move()
+			self.knowledgeBase.printing()
+		elif leftScore<= riskFactor and leftScore <= rightScore:
+			self.turn(LEFT)
+			self.move()
+			self.knowledgeBase.printing()
+		elif rightScore<=riskFactor:
+			self.turn(RIGHT)
+			self.move()
+			self.knowledgeBase.printing()
+		else:
+			backTracked=self.backTrack(self.knowledgeBase.moveStack,riskFactor)
+			if backTracked:
+				print("\tbacktracked")
+				return
+			else:
+				print("\tno suitable backtrack")
+		riskFactor+=1
+
+
+
+if __name__ == '__main__':
+	Agent()

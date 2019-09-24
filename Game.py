@@ -1,123 +1,136 @@
 from Agent import Agent
+from GameOverException import GameOverException
 from WumpusWorldGenerator import WumpusWorldGenerator
-class Game:
+class Game():
+
+	def __init__(self, agent,size, wumpusProb, pitProb, obsProb):
+		print("Game initiated")
+		#self.knowledgeBase=KnowledgeBase()
+		self.agentt=agent
+		self.wwg=WumpusWorldGenerator()
+		self.world=self.wwg.generateWorld(size,wumpusProb, pitProb, obsProb)
+		self.agentt.position = self.wwg.startingPosition
+		self.score=1000
+		self.gameOver=False
+
 	def getScore(self):
-		return score
+		return self.score
 
 	def moveAgent(self):
-		oldPos=[Agent.position[0],Agent.position[1]]
-		if world[oldPos[0]+Agent.direction[0]][oldPos[1]+Agent.direction[1]]==3:
+		oldPos=[self.agentt.position[0],self.agentt.position[1]]
+		if self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==3:
 			return False
-		elif world[oldPos[0]+Agent.direction[0]][oldPos[1]+Agent.direction[1]]==1 or \
-		world[oldPos[0]+Agent.direction[0]][oldPos[1]+Agent.direction[1]]==2:
-			score-=1000
-			Agent.died=true
-			gameOver=true
+		elif self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==1 or \
+		self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==2:
+			self.score-=1000
+			self.agentt.died=true
+			self.gameOver=true
+			GameOverException.exception(False)
 
-		Agent.position[0]=Agent.position[0]+Agent.direction[0]
-		Agent.position[1]=Agent.position[1]+Agent.direction[1]
+		self.agentt.position[0]=self.agentt.position[0]+self.agentt.direction[0]
+		self.agentt.position[1]=self.agentt.position[1]+self.agentt.direction[1]
 
 
 		### set percepts
 
-		if world[Agent.position[0]-1][Agent.position[1]]==1 or \
-		world[Agent.position[1]+1][Agent.position[1]]==1 or \
-		world[Agent.position[0]][Agent.position[1]+1]==1 or \
-		world[Agent.position[0]][Agent.position[1]-1]==1:
-			Agent.stench=True
+		if self.world[self.agentt.position[0]-1][self.agentt.position[1]]==1 or \
+		self.world[self.agentt.position[1]+1][self.agentt.position[1]]==1 or \
+		self.world[self.agentt.position[0]][self.agentt.position[1]+1]==1 or \
+		self.world[self.agentt.position[0]][self.agentt.position[1]-1]==1:
+			self.agentt.stench=True
 		else:
-			Agent.stench=False
+			self.agentt.stench=False
 
-		if world[Agent.position[0]-1][Agent.position[1]]==2 or \
-		world[Agent.position[1]+1][Agent.position[1]]==2 or \
-		world[Agent.position[0]][Agent.position[1]+1]==2 or \
-		world[Agent.position[0]][Agent.position[1]-1]==2:
-			Agent.breeze=True
+		if self.world[self.agentt.position[0]-1][self.agentt.position[1]]==2 or \
+		self.world[self.agentt.position[1]+1][self.agentt.position[1]]==2 or \
+		self.world[self.agentt.position[0]][self.agentt.position[1]+1]==2 or \
+		self.world[self.agentt.position[0]][self.agentt.position[1]-1]==2:
+			self.agentt.breeze=True
 		else:
-			Agent.breeze=False
+			self.agentt.breeze=False
 
-		if world[Agent.position[0]][Agent.position[1]]==4:
-			Agent.glimmer=True
+		if world[self.agentt.position[0]][self.agentt.position[1]]==4:
+			self.agentt.glimmer=True
 		else:
-			Agent.glimmer=False
+			self.agentt.glimmer=False
 
 		score-=1
 
 		return True
 
 	def turnAgent(self,direction):
-		if Agent.direction==Agent.LEFT:
+		if self.agentt.direction==self.agentt.LEFT:
 			print("Agent turned left")
-			if Agent.direction==Agent.knowledgeBase.NORTH:
-				Agent.direction=Agent.knowledgeBase.WEST
-			elif Agent.direction==Agent.knowledgeBase.EAST:
-				Agent.direction=Agent.knowledgeBase.NORTH
-			elif Agent.direction==Agent.knowledgeBase.SOUTH:
-				Agent.direction=Agent.knowledgeBase.EAST
-			elif Agent.direction==Agent.knowledgeBase.WEST:
-				Agent.direction=Agent.knowledgeBase.SOUTH
+			if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
+				self.agentt.direction=self.agentt.knowledgeBase.WEST
+			elif self.agentt.direction==self.agentt.knowledgeBase.EAST:
+				self.agentt.direction=self.agentt.knowledgeBase.NORTH
+			elif self.agentt.direction==self.agentt.knowledgeBase.SOUTH:
+				self.agentt.direction=self.agentt.knowledgeBase.EAST
+			elif self.agentt.direction==self.agentt.knowledgeBase.WEST:
+				self.agentt.direction=self.agentt.knowledgeBase.SOUTH
 			else:
 				print("asha uchit hoynai baam dik theke")
 
-		elif Agent.direction==Agent.RIGHT:
+		elif self.agentt.direction==self.agentt.RIGHT:
 			print("Agent turned right")
-			if Agent.direction==Agent.knowledgeBase.NORTH:
-				Agent.direction=Agent.knowledgeBase.EAST
-			elif Agent.direction==Agent.knowledgeBase.EAST:
-				Agent.direction=Agent.knowledgeBase.SOUTH
-			elif Agent.direction==Agent.knowledgeBase.SOUTH:
-				Agent.direction=Agent.knowledgeBase.WEST
-			elif Agent.direction==Agent.knowledgeBase.WEST:
-				Agent.direction=Agent.knowledgeBase.NORTH
+			if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
+				self.agentt.direction=self.agentt.knowledgeBase.EAST
+			elif self.agentt.direction==self.agentt.knowledgeBase.EAST:
+				self.agentt.direction=self.agentt.knowledgeBase.SOUTH
+			elif self.agentt.direction==self.agentt.knowledgeBase.SOUTH:
+				self.agentt.direction=self.agentt.knowledgeBase.WEST
+			elif self.agentt.direction==self.agentt.knowledgeBase.WEST:
+				self.agentt.direction=self.agentt.knowledgeBase.NORTH
 			else:
 				print("asha uchit hoynai daan dik theke")
 		else:
 			print("Sesh .... kicchu hobe na tomake diye -_- ")
 
-		score-=1
+		self.score-=1
 
 	def processShot(self):
-		if Agent.direction==Agent.knowledgeBase.NORTH:
-			for i in range(Agent.position[1], len(world)-1):
-				if world[Agent.position[0]][i]==1:
-					world[Agent.position[0]][i]==0
-					Agent.scream=True
+		if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
+			for i in range(self.agentt.position[1], len(self.world)-1):
+				if self.world[self.agentt.position[0]][i]==1:
+					self.world[self.agentt.position[0]][i]==0
+					self.agentt.scream=True
 					return
-				elif world[Agent.position[0]][i]==1:
+				elif self.world[self.agentt.position[0]][i]==1:
 					########jhmela ase mone hocchee################
-					Agent.scream=False
+					self.agentt.scream=False
 					break
-		elif Agent.direction==Agent.knowledgeBase.EAST:
-			for i in range(Agent.position[0], len(world)-1):
-				if world[i][Agent.position[1]]==1:
-					world[i][Agent.position[1]]==0
-					Agent.scream=True
+		elif self.agentt.direction==self.agentt.knowledgeBase.EAST:
+			for i in range(self.agentt.position[0], len(self.world)-1):
+				if self.world[i][self.agentt.position[1]]==1:
+					self.world[i][self.agentt.position[1]]==0
+					self.agentt.scream=True
 					return
-				elif world[i][Agent.position[1]]==1:
+				elif self.world[i][self.agentt.position[1]]==1:
 					########jhmela ase mone hocchee################
-					Agent.scream=False
-					break
-
-		elif Agent.direction==Agent.knowledgeBase.SOUTH:
-			for i in range(0,Agent.position[1]):
-				if world[Agent.position[0]][i]==1:
-					world[Agent.position[0]][i]==0
-					Agent.scream=True
-					return
-				elif world[Agent.position[0]][i]==1:
-					########jhmela ase mone hocchee################
-					Agent.scream=False
+					self.agentt.scream=False
 					break
 
-		elif Agent.direction==Agent.knowledgeBase.WEST:
-			for i in range(0,Agent.position[0]):
-				if world[i][Agent.position[1]]==1:
-					world[i][Agent.position[1]]==0
-					Agent.scream=True
+		elif self.agentt.direction==self.agentt.knowledgeBase.SOUTH:
+			for i in range(0,self.agentt.position[1]):
+				if self.world[self.agentt.position[0]][i]==1:
+					self.world[self.agentt.position[0]][i]==0
+					self.agentt.scream=True
 					return
-				elif world[i][Agent.position[1]]==1:
+				elif self.world[self.agentt.position[0]][i]==1:
 					########jhmela ase mone hocchee################
-					Agent.scream=False
+					self.agentt.scream=False
+					break
+
+		elif self.agentt.direction==self.agentt.knowledgeBase.WEST:
+			for i in range(0,self.agentt.position[0]):
+				if self.world[i][self.agentt.position[1]]==1:
+					self.world[i][self.agentt.position[1]]==0
+					self.agentt.scream=True
+					return
+				elif self.world[i][self.agentt.position[1]]==1:
+					########jhmela ase mone hocchee################
+					self.agentt.scream=False
 					break
 			
 		else:
@@ -125,17 +138,15 @@ class Game:
 
 
 	def agentGrabsGold(self):
-		if world[Agent.position[0]][Agent.position[1]]==4:
-			world[Agent.position[0]][Agent.position[1]]=0
-			score+=1000
+		if self.world[self.agentt.position[0]][self.agentt.position[1]]==4:
+			self.world[self.agentt.position[0]][self.agentt.position[1]]=0
+			self.score+=1000
+			GameOverException.exception(True)
 		else:
 			print("Gold nai gold nai.. faka she cell :)")
 
 
-score=1000
-size=int(10)
-gameOver=False
-wumpusProb=0.05
-pitProb=0.05
-obsProb=0.05
-world=WumpusWorldGenerator.generateWorld(size,wumpusProb, pitProb, obsProb)
+
+
+if __name__ == '__main__':
+	Game()

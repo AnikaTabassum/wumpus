@@ -1,5 +1,5 @@
-
-class Knowledgebase:
+import sys
+class Knowledgebase():
 
 	def calling(self):
 		self.registerMove(0,0)
@@ -161,12 +161,12 @@ obstacleMap= [[0 for x in range(colDimension+2)] for y in range(rowDimension+2)]
 pathMap= [[0 for x in range(colDimension+2)] for y in range(rowDimension+2)] 
 glimmer=[]
 steps=int(0)
-x = range(9, 6)
 
-for n in x:
-  	print(n)
-print(moveStack[0])
+print("max ",sys.maxsize)
 #lastX=moveStack[len(moveStack)-1][0]
 #print("pathMap ", len(moveStack)-1)
-Knowledgebase().calling()
+#Knowledgebase().calling()
+
+if __name__ == "__main__":
+	Knowledgebase().calling()
 	
