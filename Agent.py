@@ -20,7 +20,7 @@ class Agent():
 		self.haveGold   = False;
 		self.glimmer= False;
 		self.game=""
-		self.quiver=WumpusWorldGenerator().numWmpi		
+		#self.quiver=WumpusWorldGenerator().numWmpi		
 		self.quiver=1
 	def start(self,Game):
 		self.game=Game
@@ -32,7 +32,8 @@ class Agent():
 			self.infer()
 
 	def move(self):
-		if self.game.moveAgent():
+		#print("move")
+		if not self.game.moveAgent():
 			self.knowledgeBase.tellBump(self.position[0],self.position[1],self.direction)
 			return 
 		x=int(self.position[0])
@@ -42,10 +43,12 @@ class Agent():
 		self.processPercepts(x,y)
 
 	def processPercepts(self,x,y):
+		#print("perceive")
 		if self.glimmer:
 			self.knowledgeBase.tellGlimmer(x,y)
 		if not self.breeze and not self.stench:
 			self.knowledgeBase.tellClear(x,y)
+			return 
 		if self.breeze:
 			self.knowledgeBase.tellBreeze(x,y)
 		if self.stench:
@@ -58,6 +61,7 @@ class Agent():
 	def shoot(self):
 		quiver-=1
 		print("agent loosed the arrow")
+		game.processShot()
 		self.processPercepts(position[0], position[1])
 
 	def pickUp(self):
@@ -65,7 +69,7 @@ class Agent():
 		print("agent picked up the gold")
 
 	def backTrack(self, moveStack,riskFactor):
-		i=int(self.lookBack(riskFactor))
+		i=int(self.lookback(riskFactor))
 		if i<0:
 			return False
 
@@ -87,12 +91,12 @@ class Agent():
 					self.move()
 					tempMoveStack.remove(tempMoveStack[len(tempMoveStack)-1])
 				else:
-					turn=int(tempTurnStack[len(tempTurnStack)-1])
-					if turn==LEFT:
-						turn(RIGHT)
+					turnnn=int(tempTurnStack[len(tempTurnStack)-1])
+					if turnnn==LEFT:
+						self.turn(RIGHT)
 						tempTurnStack.remove(tempTurnStack[len(tempTurnStack)-1])
-					elif turn== RIGHT:
-						turn=LEFT
+					elif turnnn== RIGHT:
+						self.turn(LEFT)
 						tempTurnStack.remove(tempTurnStack[len(tempTurnStack)-1])
 
 			return True
@@ -129,12 +133,13 @@ class Agent():
 
 		riskFactor=int(-2)
 		while True:
-			print("infer()\n\tpos:[", self.position[0],",",self.position[1],"[\n\tdirection:{",\
+			print("infer()\n\tpos:[", self.position[0],",",self.position[1],"]\n\tdirection:{",\
 				self.direction[0],",",self.direction[1],"}\n\triskFactor",riskFactor)
 			forwardScore=sys.maxsize
 			leftScore=sys.maxsize
 			rightScore=sys.maxsize
 			if self.direction==self.knowledgeBase.NORTH:
+				
 				forwardScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]+1)+\
 				self.knowledgeBase.askPit(self.position[0], self.position[1]+1)+\
 				self.knowledgeBase.askObstacle(self.position[0], self.position[1]+1)+\
@@ -149,7 +154,10 @@ class Agent():
 				self.knowledgeBase.askPit(self.position[0]-1, self.position[1])+\
 				self.knowledgeBase.askObstacle(self.position[0]-1, self.position[1])+\
 				self.knowledgeBase.askPath(self.position[0]-1, self.position[1])
-			elif direction==self.knowledgeBase.SOUTH:
+
+				#print("NORTH", forwardScore," ", leftScore," ",rightScore)
+			elif self.direction==self.knowledgeBase.SOUTH:
+				#print("SOUTH")
 				forwardScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]-1)+\
 				self.knowledgeBase.askPit(self.position[0], self.position[1]-1)+\
 				self.knowledgeBase.askObstacle(self.position[0], self.position[1]-1)+\
@@ -166,14 +174,15 @@ class Agent():
 				self.knowledgeBase.askPath(self.position[0]+1, self.position[1])
 
 			elif self.direction==self.knowledgeBase.EAST:
+				#print("EAST")
 				forwardScore=self.knowledgeBase.askWumpus(self.position[0]+1, self.position[1])+\
 				self.knowledgeBase.askPit(self.position[0]+1, self.position[1])+\
 				self.knowledgeBase.askObstacle(self.position[0]+1, self.position[1])+\
 				self.knowledgeBase.askPath(self.position[0]+1, self.position[1])
 
 				rightScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]-1)+\
-				self.knowledgeBase.askPit(self.position[0], self.self.position[1]-1)+\
-				self.knowledgeBase.askObstacle(self.position[0], vposition[1]-1)+\
+				self.knowledgeBase.askPit(self.position[0], self.position[1]-1)+\
+				self.knowledgeBase.askObstacle(self.position[0], self.position[1]-1)+\
 				self.knowledgeBase.askPath(self.position[0], self.position[1]-1)
 
 				leftScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]+1)+\
@@ -182,6 +191,7 @@ class Agent():
 				self.knowledgeBase.askPath(self.position[0], self.position[1]+1)
 
 			elif self.direction==self.knowledgeBase.WEST:
+				#print("WEST")
 				forwardScore=self.knowledgeBase.askWumpus(self.position[0]-1, self.position[1])+\
 				self.knowledgeBase.askPit(self.position[0]-1, self.position[1])+\
 				self.knowledgeBase.askObstacle(self.position[0]-1, self.position[1])+\
@@ -190,7 +200,7 @@ class Agent():
 				rightScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]+1)+\
 				self.knowledgeBase.askPit(self.position[0], self.position[1]+1)+\
 				self.knowledgeBase.askObstacle(self.position[0], self.position[1]+1)+\
-				self.knowledgeBase.askPath(position[0], position[1]+1)
+				self.knowledgeBase.askPath(self.position[0], self.position[1]+1)
 
 				leftScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]-1)+\
 				self.knowledgeBase.askPit(self.position[0], self.position[1]-1)+\
@@ -200,27 +210,34 @@ class Agent():
 			else:
 				print("Direction din not match in infer()")
 
-		print("\tforwardDanger: ", forwardScore, "\n\trightDanger: ", rightScore, "\n\tleftDanger: ",leftScore)
+			print("\tforwardDanger: ", forwardScore, "\n\trightDanger: ", rightScore, "\n\tleftDanger: ",leftScore)
 
-		if forwardScore<=riskFactor and forwardScore<=leftScore and forwardScore<=rightScore:
-			self.move()
-			self.knowledgeBase.printing()
-		elif leftScore<= riskFactor and leftScore <= rightScore:
-			self.turn(LEFT)
-			self.move()
-			self.knowledgeBase.printing()
-		elif rightScore<=riskFactor:
-			self.turn(RIGHT)
-			self.move()
-			self.knowledgeBase.printing()
-		else:
-			backTracked=self.backTrack(self.knowledgeBase.moveStack,riskFactor)
-			if backTracked:
-				print("\tbacktracked")
-				return
+			if forwardScore<=riskFactor and forwardScore<=leftScore and forwardScore<=rightScore:
+				self.move()
+
+				#print("check")
+				
+				
+				self.knowledgeBase.printing()
+			elif leftScore<= riskFactor and leftScore <= rightScore:
+				self.turn(self.LEFT)
+				#print("check")
+				self.move()
+				self.knowledgeBase.printing()
+			elif rightScore<=riskFactor:
+				self.turn(self.RIGHT)
+				#print("check")
+				self.move()
+				self.knowledgeBase.printing()
 			else:
-				print("\tno suitable backtrack")
-		riskFactor+=1
+				#print("-----------------check-------------------------")
+				backTracked=self.backTrack(self.knowledgeBase.moveStack,riskFactor)
+				if backTracked:
+					print("\tbacktracked")
+					return
+				else:
+					print("\tno suitable backtrack")
+			riskFactor+=1
 
 
 

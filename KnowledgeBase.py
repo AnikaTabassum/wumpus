@@ -12,32 +12,36 @@ class KnowledgeBase():
 		self.turnStack=[]
 		self.colDimension=10
 		self.rowDimension=10
-		self.wumpusMap= [[0 for x in range(self.colDimension+2)] for y in range(self.rowDimension+2)] 
-		self.pitMap= [[0 for x in range(self.colDimension+2)] for y in range(self.rowDimension+2)] 
-		self.obstacleMap= [[0 for x in range(self.colDimension+2)] for y in range(self.rowDimension+2)] 
-		self.pathMap= [[0 for x in range(self.colDimension+2)] for y in range(self.rowDimension+2)] 
-		self.glimmer=[]
+		self.wumpusMap= [[0 for x in range(self.colDimension)] for y in range(self.rowDimension)] 
+		self.pitMap= [[0 for x in range(self.colDimension)] for y in range(self.rowDimension)] 
+		self.obstacleMap= [[0 for x in range(self.colDimension)] for y in range(self.rowDimension)] 
+		self.pathMap= [[0 for x in range(self.colDimension)] for y in range(self.rowDimension)] 
+		self.glimmer=[0 for x in range(2)] 
 		self.steps=int(0)
 
-		print("max ",sys.maxsize)
+		
+		#self.calling()
 	def calling(self):
-		self.registerMove(0,0)
-		self.tellBump(0,0, NORTH)
+		#print("Calling babyy ")
+		#self.registerMove(0,0)
+		self.tellBump(0,0, self.NORTH)
 		self.registerMove(1,0)
 		self.tellClear(1,0)
 		self.registerMove(2,0)
 		self.tellStench(2,0)
+		self.tellGlimmer(5,5)
 		self.printing()
 
 	def perceive(self, x,y, map):
 
-		for d in DIRECTIONS:
-			print(d)
+		for d in self.DIRECTIONS:
+			#print(d)
 			if(x+d[0]>=0 and x+d[0]<len(map) and y+d[1]>=0 and y+d[1]<len(map)):
-				map[x+d[0]][y+d[1]]=CLEAR
+				#print("Working?????????????????????????????????")
+				map[x+d[0]][y+d[1]]=self.CLEAR
 
 	def registerMove(self,x,y):
-		print("i am Knowledgebase")
+		#print("i am Knowledgebase")
 		move=[x,y]
 		self.moveStack.append(move)
 		self.wumpusMap[x][y]=self.CLEAR
@@ -53,15 +57,17 @@ class KnowledgeBase():
 
 	def tellClear(self,x,y):
 		for d in self.DIRECTIONS:
-			print(d)
+			#print(d)
 			if(x+d[0]>=0 and x+d[0]<len(self.pathMap) and y+d[1]>=0 and y+d[1]<len(self.pathMap)):
 				self.wumpusMap[x+d[0]][y+d[1]]=self.CLEAR
 				self.pitMap[x+d[0]][y+d[1]]=self.CLEAR
 
 	def askPath(self,x,y):
 		try:
+			#print("askPath ",self.pathMap[x][y])
 			return self.pathMap[x][y]
-		except IndexError:
+		except IndexError as e:
+			#print(e)
 			return 100
 		################################3out of bound ta dite hobe########
 
@@ -71,6 +77,7 @@ class KnowledgeBase():
 
 	def askWumpus(self, x,y):
 		try:
+			#print("askWumpus ","x: ",x,"y: ",y,self.wumpusMap[x][y])
 			return self.wumpusMap[x][y]
 		except IndexError:
 			return 100
@@ -86,7 +93,7 @@ class KnowledgeBase():
 		except IndexError:
 			return 100
 	def tellBump(self, x,y, direction):
-		print("tell bump", x,", ",y)
+		#print("tell bump", x,", ",y)
 		try:
 			self.obstacleMap[x+direction[0]][y+direction[1]]+=1
 		except IndexError:
@@ -101,11 +108,11 @@ class KnowledgeBase():
 			return 100
 
 	def tellGlimmer(self, x,y):
-		print("not here")
+		#print("not here")
 		self.glimmer[0]=x
 		self.glimmer[1]=y
 	def askGlimmer(self,x,y):
-		print("Why am i even here?", glimmer[0])
+		#print("Why am i even here?", self.glimmer[0])
 		if self.glimmer[0]==x and self.glimmer[1]==y:
 			return True
 		else:
@@ -123,15 +130,15 @@ class KnowledgeBase():
 	def printing(self):
 		
 		x=int(0)
-		print(int(len(self.pathMap)))
-		for y in range(12):
+		#print(int(len(self.pathMap)))
+		for y in range(10):
 
 			############3ami eikhane ektu genjam korsi... last the e asha uchit chilo#########
 			tempStr=""
 
 			if x==0:
 				tempStr+=str(y)+"|"
-			for x in range(12):
+			for x in range(10):
 				lastX=self.moveStack[len(self.moveStack)-1][0]
 				lastY=self.moveStack[len(self.moveStack)-1][1]
 				if lastX==x and lastY==y:
@@ -172,5 +179,5 @@ class KnowledgeBase():
 #Knowledgebase().calling()
 
 if __name__ == "__main__":
-	Knowledgebase()
+	kn=KnowledgeBase()
 	

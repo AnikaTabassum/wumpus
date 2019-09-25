@@ -12,6 +12,7 @@ class Game():
 		self.agentt.position = self.wwg.startingPosition
 		self.score=1000
 		self.gameOver=False
+		self.ge=GameOverException()
 
 	def getScore(self):
 		return self.score
@@ -23,9 +24,9 @@ class Game():
 		elif self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==1 or \
 		self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==2:
 			self.score-=1000
-			self.agentt.died=true
-			self.gameOver=true
-			GameOverException.exception(False)
+			self.agentt.died=True
+			self.gameOver=True
+			self.ge.exception(False)
 
 		self.agentt.position[0]=self.agentt.position[0]+self.agentt.direction[0]
 		self.agentt.position[1]=self.agentt.position[1]+self.agentt.direction[1]
@@ -49,17 +50,17 @@ class Game():
 		else:
 			self.agentt.breeze=False
 
-		if world[self.agentt.position[0]][self.agentt.position[1]]==4:
+		if self.world[self.agentt.position[0]][self.agentt.position[1]]==4:
 			self.agentt.glimmer=True
 		else:
 			self.agentt.glimmer=False
 
-		score-=1
+		self.score-=1
 
 		return True
 
 	def turnAgent(self,direction):
-		if self.agentt.direction==self.agentt.LEFT:
+		if direction==self.agentt.LEFT:
 			print("Agent turned left")
 			if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
 				self.agentt.direction=self.agentt.knowledgeBase.WEST
@@ -72,7 +73,7 @@ class Game():
 			else:
 				print("asha uchit hoynai baam dik theke")
 
-		elif self.agentt.direction==self.agentt.RIGHT:
+		elif direction==self.agentt.RIGHT:
 			print("Agent turned right")
 			if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
 				self.agentt.direction=self.agentt.knowledgeBase.EAST

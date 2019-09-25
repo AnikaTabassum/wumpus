@@ -22,9 +22,10 @@ class WumpusWorldGenerator():
 
 	def getRandomEmptyLocation(self, wumpusWorld):
 		found=False
+		size=10
 		while not found:
-			randX=random.randrange(size+2)
-			randY=random.randrange(size+2)
+			randX=random.randrange(size)
+			randY=random.randrange(size)
 
 			if wumpusWorld[randX][randY]==0:
 				empty=[randX, randY]
@@ -36,37 +37,38 @@ class WumpusWorldGenerator():
 		wumpusWorld[goldposition[0]][goldposition[1]]=4
 
 	def populateWorld(self, wumpusWorld, wumpusProb, pitProb,obstacleProb):
-		
+		#print("populating ",len(wumpusWorld))
+		cnt=int(0)
 		for i in range(len(wumpusWorld)):
 			for j in range(len(wumpusWorld)):
 				if i==0 or j==0 or i==len(wumpusWorld)-1 or j== len(wumpusWorld)-1:
 					wumpusWorld[i][j]=3
-					pass
+					#print("tetststs ","i ",i,"j ",j,wumpusWorld[i][j])
+					continue
 				rand=random.random()
-				if rand<=wumpusProb:
+				
+				if rand<=wumpusProb and self.numWmpi<1:
 					wumpusWorld[i][j]=1
-					self.numWmpi+=1
-					pass
-				rand=random.random()
-				if rand<=pitProb:
+					#print("wumpusWorld ",wumpusProb,"i: ",i,"j : ",j)
+					self.numWmpi+=1 
+					cnt+=1
+					#print("cnt", cnt)
+					continue
+				rand2=random.random()
+				if rand2<=pitProb:
 					wumpusWorld[i][j]=2
 					
-					pass
+					continue
 
-				rand=random.random()
-				if rand<=obstacleProb:
+				'''rand3=random.random()
+				if rand3<=obstacleProb:
 					wumpusWorld[i][j]=3
 					
-					pass
+					continue'''
 				
 
 
 
-
-size=10 
-wumpusProb=0.05 
-pitProb=0.05 
-obstacleProb=0.05
 if __name__ == '__main__':
     WumpusWorldGenerator()
     #print(WumpusWorldGenerator.numWmpi)
