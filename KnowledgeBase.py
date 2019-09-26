@@ -142,12 +142,12 @@ class KnowledgeBase():
 				lastX=self.moveStack[len(self.moveStack)-1][0]
 				lastY=self.moveStack[len(self.moveStack)-1][1]
 				if lastX==x and lastY==y:
-					print(x,",",y)
+					#print(x,",",y)
 					tempStr+="o "
 				elif self.pathMap[x][y]>0:
 					tempStr+="+ "
 				elif self.obstacleMap[x][y]>0:
-					print(x,",",y)
+					#print(x,",",y)
 					tempStr+="# "
 				elif self.wumpusMap[x][y]<0 and self.pitMap[x][y]<0:
 					tempStr+="  "
