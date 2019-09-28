@@ -31,11 +31,10 @@ class Game():
 			self.agentt.died=True
 			self.gameOver=True
 			self.ge.exception(False)
-
+		print("direction ",self.agentt.direction)
 		self.agentt.position[0]=self.agentt.position[0]+self.agentt.direction[0]
 		self.agentt.position[1]=self.agentt.position[1]+self.agentt.direction[1]
-
-
+		#agentPos=self.agentt.setPosition(self.agentt.position,self.agentt.direction)
 		### set percepts
 
 		if self.world[self.agentt.position[0]-1][self.agentt.position[1]]==1 or \
@@ -79,30 +78,56 @@ class Game():
 		if direction==self.agentt.LEFT:
 			print("Agent turned left")
 			if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
-				self.agentt.direction=self.agentt.knowledgeBase.WEST
+				#self.agentt.direction=self.agentt.knowledgeBase.WEST
+				#print("new direction set to be ", self.agentt.knowledgeBase.WEST)
+				self.agentt.setDirection(self.agentt.knowledgeBase.WEST)
+				#print("from north to west")
+				#print("north to ",self.agentt.direction )
 			elif self.agentt.direction==self.agentt.knowledgeBase.EAST:
-				self.agentt.direction=self.agentt.knowledgeBase.NORTH
+				#-self.agentt.direction=self.agentt.knowledgeBase.NORTH
+				#print("new direction set to be ", self.agentt.knowledgeBase.NORTH)
+				self.agentt.setDirection(self.agentt.knowledgeBase.NORTH)
+				#print("from east to north")
+				#print("east to ",self.agentt.direction )
 			elif self.agentt.direction==self.agentt.knowledgeBase.SOUTH:
-				self.agentt.direction=self.agentt.knowledgeBase.EAST
+				#self.agentt.direction=self.agentt.knowledgeBase.EAST
+				#print("new direction set to be ", self.agentt.knowledgeBase.EAST)
+				self.agentt.setDirection(self.agentt.knowledgeBase.EAST)
+				#print("south to ",self.agentt.direction )
 			elif self.agentt.direction==self.agentt.knowledgeBase.WEST:
-				self.agentt.direction=self.agentt.knowledgeBase.SOUTH
+				#self.agentt.direction=self.agentt.knowledgeBase.SOUTH
+				#print("new direction set to be ", self.agentt.knowledgeBase.SOUTH)
+				self.agentt.setDirection(self.agentt.knowledgeBase.SOUTH)
+				#print("from west to south")
+				#print("west to ",self.agentt.direction )
 			else:
 				print("asha uchit hoynai baam dik theke")
+				sys.exit()
 
 		elif direction==self.agentt.RIGHT:
 			print("Agent turned right")
 			if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
-				self.agentt.direction=self.agentt.knowledgeBase.EAST
+				#self.agentt.direction=self.agentt.knowledgeBase.EAST
+				self.agentt.setDirection(self.agentt.knowledgeBase.EAST)
+				#print("new direction set to be ", self.agentt.knowledgeBase.EAST)
 			elif self.agentt.direction==self.agentt.knowledgeBase.EAST:
-				self.agentt.direction=self.agentt.knowledgeBase.SOUTH
+				#self.agentt.direction=self.agentt.knowledgeBase.SOUTH
+				self.agentt.setDirection(self.agentt.knowledgeBase.SOUTH)
+				#print("new direction set to be ", self.agentt.knowledgeBase.SOUTH)
 			elif self.agentt.direction==self.agentt.knowledgeBase.SOUTH:
-				self.agentt.direction=self.agentt.knowledgeBase.WEST
+				#self.agentt.direction=self.agentt.knowledgeBase.WEST
+				self.agentt.setDirection(self.agentt.knowledgeBase.WEST)
+				#print("new direction set to be ", self.agentt.knowledgeBase.WEST)
 			elif self.agentt.direction==self.agentt.knowledgeBase.WEST:
-				self.agentt.direction=self.agentt.knowledgeBase.NORTH
+				#self.agentt.direction=self.agentt.knowledgeBase.NORTH
+				self.agentt.setDirection(self.agentt.knowledgeBase.NORTH)
+				#print("new direction set to be ", self.agentt.knowledgeBase.NORTH)
 			else:
 				print("asha uchit hoynai daan dik theke")
+				sys.exit()
 		else:
 			print("Sesh .... kicchu hobe na tomake diye -_- ")
+			sys.exit()
 
 		self.score-=1
 

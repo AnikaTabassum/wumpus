@@ -58,10 +58,15 @@ class Agent():
 			self.knowledgeBase.tellBreeze(x,y)
 		if self.stench:
 			self.knowledgeBase.tellStench(x,y)
-
+	def setDirection(self, directionanika):
+		print('direction anika', directionanika)
+		self.direction=directionanika
 	def turn(self, direction):
 		self.game.turnAgent(direction)
 		self.knowledgeBase.registerTurn(direction)
+	def setPosition(self, position, direction):
+		self.agentt.position[0]=self.agentt.position[0]+self.agentt.direction[0]
+		self.agentt.position[1]=self.agentt.position[1]+self.agentt.direction[1]
 
 	def placeGlimmer(self, flag):
 		print("placeGlimmer")
