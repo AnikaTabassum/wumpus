@@ -1,6 +1,6 @@
 from Game import Game
 from GameOverException import GameOverException
-from Agent import Agent
+from AiAgent import Agent
 
 class Driver:
 	def run(self):
@@ -10,8 +10,9 @@ class Driver:
 		game=Game(agent,size,wumpusProb,pitProb,obsProb)
 		try:
 			agent.start(game)
-		except:
+		except Exception as e:
 			print(ge.win)
+			print(e)
 			if ge.checkWin():
 				print("agent won the game")
 			else:

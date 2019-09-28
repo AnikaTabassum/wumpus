@@ -1,6 +1,7 @@
-from Agent import Agent
+from AiAgent import Agent
 from GameOverException import GameOverException
 from WumpusWorldGenerator import WumpusWorldGenerator
+import sys
 class Game():
 
 	def __init__(self, agent,size, wumpusProb, pitProb, obsProb):
@@ -19,10 +20,13 @@ class Game():
 
 	def moveAgent(self):
 		oldPos=[self.agentt.position[0],self.agentt.position[1]]
+
 		if self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==3:
+			print("-------------------------------------obstacle----------------------------------")
 			return False
 		elif self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==1 or \
 		self.world[oldPos[0]+self.agentt.direction[0]][oldPos[1]+self.agentt.direction[1]]==2:
+			print("breeze or stech. gelei mrittu")
 			self.score-=1000
 			self.agentt.died=True
 			self.gameOver=True
@@ -39,31 +43,33 @@ class Game():
 		self.world[self.agentt.position[0]][self.agentt.position[1]+1]==1 or \
 		self.world[self.agentt.position[0]][self.agentt.position[1]-1]==1:
 			print("stench er if")
-			#self.agentt.placeStench(True)
-			self.agentt.stench=True
+			self.agentt.placeStench(True)
+			#self.agentt.stench=True
 
 		else:
-			#self.agentt.placeStench(True)
-			self.agentt.stench=False
+			self.agentt.placeStench(True)
+			#self.agentt.stench=False
 
 		if self.world[self.agentt.position[0]-1][self.agentt.position[1]]==2 or \
 		self.world[self.agentt.position[0]+1][self.agentt.position[1]]==2 or \
 		self.world[self.agentt.position[0]][self.agentt.position[1]+1]==2 or \
 		self.world[self.agentt.position[0]][self.agentt.position[1]-1]==2:
 			print("breeze er if")
-			#self.agentt.placeBreeze(True)
-			self.agentt.breeze=True
+			self.agentt.placeBreeze(True)
+			#self.agentt.breeze=True
 		else:
-			#self.agentt.placeBreeze(False)
-			self.agentt.breeze=False
+			self.agentt.placeBreeze(False)
+			#self.agentt.breeze=False
 
 		if self.world[self.agentt.position[0]][self.agentt.position[1]]==4:
 			print("Glimmer if")
+
 			self.agentt.placeGlimmer(True)
+			
 			#self.agentt.glimmer=True
 		else:
-			#self.agentt.placeGlimmer(False)
-			self.agentt.glimmer=False
+			self.agentt.placeGlimmer(False)
+			#self.agentt.glimmer=False
 
 		self.score-=1
 
@@ -153,7 +159,9 @@ class Game():
 			print("Agent is grabbing gold")
 			self.world[self.agentt.position[0]][self.agentt.position[1]]=0
 			self.score+=1000
-			GameOverException.exception(True)
+			self.ge.exception(True)
+			print("score is ", self.getScore())
+			sys.exit()
 		else:
 			print("Gold nai gold nai.. faka she cell :)")
 

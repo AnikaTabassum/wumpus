@@ -32,6 +32,7 @@ class KnowledgeBase():
 		self.tellGlimmer(5,5)
 		self.printing()
 
+	
 	def perceive(self, x,y, map):
 
 		for d in self.DIRECTIONS:
@@ -41,9 +42,10 @@ class KnowledgeBase():
 				map[x+d[0]][y+d[1]]=self.CLEAR
 
 	def registerMove(self,x,y):
-		#print("i am Knowledgebase")
+		print("i am Knowledgebase ",x,",",y)
 		move=[x,y]
 		self.moveStack.append(move)
+		print("reg ",self.moveStack[len(self.moveStack)-1])
 		self.wumpusMap[x][y]=self.CLEAR
 		self.pitMap[x][y]=self.CLEAR
 		self.obstacleMap[x][y]=self.CLEAR
@@ -61,7 +63,15 @@ class KnowledgeBase():
 			if(x+d[0]>=0 and x+d[0]<len(self.pathMap) and y+d[1]>=0 and y+d[1]<len(self.pathMap)):
 				self.wumpusMap[x+d[0]][y+d[1]]=self.CLEAR
 				self.pitMap[x+d[0]][y+d[1]]=self.CLEAR
+	def returnMoveStack(self):
+		print("########################################################################################################")
+		print("lalalalqlalalaalalalaalalalala ",(self.moveStack))
+		return self.moveStack
 
+	def returnTurnStack(self):
+		print("*********************************************************************")
+		print("qeqqeqeqeqeqeqeqeqeqeqeqeqeqqeeeqq",(self.turnStack))
+		return self.turnStack
 	def askPath(self,x,y):
 		try:
 			#print("askPath ",self.pathMap[x][y])
@@ -93,8 +103,9 @@ class KnowledgeBase():
 		except IndexError:
 			return 100
 	def tellBump(self, x,y, direction):
-		#print("tell bump", x,", ",y)
+		print("tell bump", x,", ",y)
 		try:
+
 			self.obstacleMap[x+direction[0]][y+direction[1]]+=1
 		except IndexError:
 			return
@@ -108,15 +119,17 @@ class KnowledgeBase():
 			return 100
 
 	def tellGlimmer(self, x,y):
-		#print("not here")
+		print("tellGlimmer", x,',',y)
 		self.glimmer[0]=x
 		self.glimmer[1]=y
 	def askGlimmer(self,x,y):
-		#print("Why am i even here?", self.glimmer[0])
+		print("Why am i even here?", self.glimmer[0])
 		if self.glimmer[0]==x and self.glimmer[1]==y:
 			return True
+
 		else:
 			return False
+
 
 	def tellScream(self, x,y, direction):
 		while x<len(self.wumpusMap) and y<len(self.wumpusMap):
