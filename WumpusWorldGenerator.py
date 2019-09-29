@@ -34,6 +34,7 @@ class WumpusWorldGenerator():
 		return null
 	def placeGold(self,wumpusWorld):
 		goldposition=self.getRandomEmptyLocation(wumpusWorld)
+		print("gold position ",goldposition[0],",", goldposition[1])
 		wumpusWorld[goldposition[0]][goldposition[1]]=4
 
 	def populateWorld(self, wumpusWorld, wumpusProb, pitProb,obstacleProb):

@@ -36,7 +36,7 @@ class KnowledgeBase():
 	def perceive(self, x,y, map):
 
 		for d in self.DIRECTIONS:
-			#print(d)
+			print("perceive ",d)
 			if(x+d[0]>=0 and x+d[0]<len(map) and y+d[1]>=0 and y+d[1]<len(map)):
 				#print("Working?????????????????????????????????")
 				map[x+d[0]][y+d[1]]=self.CLEAR
@@ -51,9 +51,10 @@ class KnowledgeBase():
 		self.obstacleMap[x][y]=self.CLEAR
 		self.pathMap[x][y]+=1
 
-	def registerTurn(self,dir):
-		if dir==0 or dir==1:
-			self.turnStack.append(dir)
+	def registerTurn(self,dirs):
+		if dirs==0 or dirs==1:
+			print("direction in kb ", dirs)
+			self.turnStack.append(dirs)
 		else:
 			print("Invalid direction passed to registerTurn")
 
@@ -144,8 +145,9 @@ class KnowledgeBase():
 		
 		x=int(0)
 		#print(int(len(self.pathMap)))
-		for y in range(10):
-
+		y=int(10)
+		while y<=0:
+			y-=1
 			############3ami eikhane ektu genjam korsi... last the e asha uchit chilo#########
 			tempStr=""
 

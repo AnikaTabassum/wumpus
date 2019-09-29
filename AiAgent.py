@@ -54,14 +54,17 @@ class Agent():
 		if not self.breeze and not self.stench:
 			self.knowledgeBase.tellClear(x,y)
 			return 
+		print("breeze ",self.breeze)
 		if self.breeze:
 			self.knowledgeBase.tellBreeze(x,y)
+		print("stench ",self.stench)
 		if self.stench:
 			self.knowledgeBase.tellStench(x,y)
 	def setDirection(self, directionanika):
 		print('direction anika', directionanika)
 		self.direction=directionanika
 	def turn(self, direction):
+		print("direction in agent ",direction)
 		self.game.turnAgent(direction)
 		self.knowledgeBase.registerTurn(direction)
 	def setPosition(self, position, direction):
@@ -106,19 +109,20 @@ class Agent():
 			self.move()
 
 			while self.position[0]!= cell[0] or self.position[1]!= cell[1]:
-				nextMove=tempMoveStack[len(tempTurnStack)-1]
+				nextMove=tempMoveStack[len(tempMoveStack)-1]
 				if self.position[0]+self.direction[0]== nextMove[0] and \
 				self.position[1]+ self.direction[1]==nextMove[1]:
 					self.move()
-					tempMoveStack.remove(tempMoveStack[len(tempMoveStack)-1])
+					tempMoveStack.pop(tempMoveStack[len(tempMoveStack)-1])
 				else:
+					print("backtrack er else")
 					turnnn=int(tempTurnStack[len(tempTurnStack)-1])
 					if turnnn==self.LEFT:
 						self.turn(self.RIGHT)
-						tempTurnStack.remove(tempTurnStack[len(tempTurnStack)-1])
+						tempTurnStack.pop(tempTurnStack[len(tempTurnStack)-1])
 					elif turnnn== self.RIGHT:
 						self.turn(self.LEFT)
-						tempTurnStack.remove(tempTurnStack[len(tempTurnStack)-1])
+						tempTurnStack.pop(tempTurnStack[len(tempTurnStack)-1])
 
 			return True
 		except IndexError:
@@ -130,7 +134,9 @@ class Agent():
 		i=int(0)
 		moveStacking=self.knowledgeBase.returnMoveStack()
 		print("riskfaactor in lookback ",riskFactor, len(moveStacking)-1)
-		for i in range(len(moveStacking)-1):
+		i=int(len(moveStacking))
+		while i<=0:
+			i-=1
 			m=self.knowledgeBase.moveStack[i]
 			for d in self.knowledgeBase.DIRECTIONS:
 				x=int(m[0]+d[0])
@@ -244,10 +250,7 @@ class Agent():
 
 			if forwardScore<=riskFactor and forwardScore<=leftScore and forwardScore<=rightScore:
 				self.move()
-
 				print("move if -1")
-				
-				
 				self.knowledgeBase.printing()
 				return 
 			elif leftScore<= riskFactor and leftScore <= rightScore:

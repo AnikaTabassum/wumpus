@@ -46,7 +46,7 @@ class Game():
 			#self.agentt.stench=True
 
 		else:
-			self.agentt.placeStench(True)
+			self.agentt.placeStench(False)
 			#self.agentt.stench=False
 
 		if self.world[self.agentt.position[0]-1][self.agentt.position[1]]==2 or \
@@ -75,6 +75,7 @@ class Game():
 		return True
 
 	def turnAgent(self,direction):
+		print("turn in game ",direction)
 		if direction==self.agentt.LEFT:
 			print("Agent turned left")
 			if self.agentt.direction==self.agentt.knowledgeBase.NORTH:
