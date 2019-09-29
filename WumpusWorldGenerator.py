@@ -15,6 +15,28 @@ class WumpusWorldGenerator():
 		print("wumpus world ",wumpusWorld)
 		return wumpusWorld
 
+	def generatePredefinedWorld(self,size,wumpusWorld,pitProb,obstacleProb):
+		wumpusWorld=[[0 for x in range(size+2)] for y in range(size+2)]
+		self.populateWorldManually(wumpusWorld)
+		print("manual ", wumpusWorld)
+		return wumpusWorld
+
+	def populateWorldManually(self,wumpusWorld):
+		wumpusWorld[6][1]=2
+		wumpusWorld[2][5]=1
+		wumpusWorld[5][2]=2
+		#wumpusWorld[4][9]=2
+		wumpusWorld[8][3]=4
+		#wumpusWorld[6][10]=2
+		#wumpusWorld[7][6]=2
+		#wumpusWorld[10][5]=2
+		for i in range(len(wumpusWorld)):
+			for j in range(len(wumpusWorld)):
+				if i==0 or j==0 or i==len(wumpusWorld)-1 or j== len(wumpusWorld)-1:
+					wumpusWorld[i][j]=3
+					#print("jsdjsdjhs")
+
+		self.startingPosition=[1,5]
 	def setStartLocation(self, wumpusWorld):
 		#startingPosition=[0,0]
 		self.startingPosition=self.getRandomEmptyLocation(wumpusWorld)
@@ -34,7 +56,7 @@ class WumpusWorldGenerator():
 		return null
 	def placeGold(self,wumpusWorld):
 		goldposition=self.getRandomEmptyLocation(wumpusWorld)
-		print("gold position ",goldposition[0],",", goldposition[1])
+		#print("gold position ",goldposition[0],",", goldposition[1])
 		wumpusWorld[goldposition[0]][goldposition[1]]=4
 
 	def populateWorld(self, wumpusWorld, wumpusProb, pitProb,obstacleProb):

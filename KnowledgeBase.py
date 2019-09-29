@@ -1,6 +1,7 @@
 import sys
+import pygame
 class KnowledgeBase():
-	def __init__(self):
+	def __init__(self,screen,rectangleHeight,rectangleWidth):
 		print("i am Knowledgebase init")
 		self.NORTH=[0,1]
 		self.SOUTH=[0,-1]
@@ -19,7 +20,15 @@ class KnowledgeBase():
 		self.glimmer=[0 for x in range(2)] 
 		self.steps=int(0)
 
-		
+		self.stench = pygame.image.load(r'/home/anika/Downloads/stench.jpg')
+		self.breeze = pygame.image.load(r'/home/anika/Downloads/breeze.png')
+		self.wumpus = pygame.image.load(r'/home/anika/Downloads/wumpus.png')
+		self.gold = pygame.image.load(r'/home/anika/Downloads/gold.png')
+		self.pit = pygame.image.load(r'/home/anika/Downloads/pit.jpg')
+		self.agent=pygame.image.load(r'/home/anika/Downloads/agent.png')
+		self.screen=screen
+		self.rectangleHeight=rectangleHeight
+		self.rectangleWidth=rectangleWidth
 		#self.calling()
 	def calling(self):
 		#print("Calling babyy ")
@@ -33,18 +42,21 @@ class KnowledgeBase():
 		self.printing()
 
 	
-	def perceive(self, x,y, map):
+	def perceive(self, x,y, map, val):
 
 		for d in self.DIRECTIONS:
-			print("perceive ",d)
+			#print("perceive ",d)
+			#map[x][y]=-val
 			if(x+d[0]>=0 and x+d[0]<len(map) and y+d[1]>=0 and y+d[1]<len(map)):
 				#print("Working?????????????????????????????????")
 				map[x+d[0]][y+d[1]]=self.CLEAR
 
+
 	def registerMove(self,x,y):
-		print("i am Knowledgebase ",x,",",y)
-		move=[x,y]
-		self.moveStack.append(move)
+		#print("i am Knowledgebase ",x,",",y)
+		if self.pathMap[x][y]==0:
+			move=[x,y]
+			self.moveStack.append(move)
 		print("reg ",self.moveStack[len(self.moveStack)-1])
 		self.wumpusMap[x][y]=self.CLEAR
 		self.pitMap[x][y]=self.CLEAR
@@ -53,29 +65,30 @@ class KnowledgeBase():
 
 	def registerTurn(self,dirs):
 		if dirs==0 or dirs==1:
-			print("direction in kb ", dirs)
+			#print("direction in kb ", dirs)
 			self.turnStack.append(dirs)
 		else:
 			print("Invalid direction passed to registerTurn")
 
 	def tellClear(self,x,y):
 		for d in self.DIRECTIONS:
-			#print(d)
+			#print("aggggggggg ",d)
 			if(x+d[0]>=0 and x+d[0]<len(self.pathMap) and y+d[1]>=0 and y+d[1]<len(self.pathMap)):
 				self.wumpusMap[x+d[0]][y+d[1]]=self.CLEAR
 				self.pitMap[x+d[0]][y+d[1]]=self.CLEAR
+				#print("if er vetor")
 	def returnMoveStack(self):
-		print("########################################################################################################")
-		print("lalalalqlalalaalalalaalalalala ",(self.moveStack))
+		#print("########################################################################################################")
+		#print("lalalalqlalalaalalalaalalalala ",(self.moveStack))
 		return self.moveStack
 
 	def returnTurnStack(self):
-		print("*********************************************************************")
-		print("qeqqeqeqeqeqeqeqeqeqeqeqeqeqqeeeqq",(self.turnStack))
+		#print("*********************************************************************")
+		#print("qeqqeqeqeqeqeqeqeqeqeqeqeqeqqeeeqq",(self.turnStack))
 		return self.turnStack
 	def askPath(self,x,y):
 		try:
-			#print("askPath ",self.pathMap[x][y])
+			#print("askPath ",x,",",y,",",self.pathMap[x][y])
 			return self.pathMap[x][y]
 		except IndexError as e:
 			#print(e)
@@ -83,12 +96,13 @@ class KnowledgeBase():
 		################################3out of bound ta dite hobe########
 
 	def tellStench(self,x,y):
+		#print("tellstench")
 		if self.pathMap[x][y]<=1:
-			self.perceive(x,y,self.wumpusMap)
+			self.perceive(x,y,self.wumpusMap, 2)
 
 	def askWumpus(self, x,y):
 		try:
-			#print("askWumpus ","x: ",x,"y: ",y,self.wumpusMap[x][y])
+			print("askWumpus ","x: ",x,"y: ",y,self.wumpusMap[x][y])
 			return self.wumpusMap[x][y]
 		except IndexError:
 			return 100
@@ -96,15 +110,17 @@ class KnowledgeBase():
 
 	def tellBreeze(self,x,y):
 		if self.pathMap[x][y]<=1:
-			self.perceive(x,y,self.pitMap)
+			self.perceive(x,y,self.pitMap,2)
+			print("+++++++++++++++++++++++++++++++++++++++++tellbreeze ",x,",",y, "ddhqiued", self.pitMap[x][y])
 
 	def askPit(self,x,y):
 		try:
+			print("askpit ","x: ",x,"y: ",y,self.pitMap[x][y])
 			return self.pitMap[x][y]
 		except IndexError:
 			return 100
 	def tellBump(self, x,y, direction):
-		print("tell bump", x,", ",y)
+		#print("tell bump", x,", ",y)
 		try:
 
 			self.obstacleMap[x+direction[0]][y+direction[1]]+=1
@@ -124,7 +140,7 @@ class KnowledgeBase():
 		self.glimmer[0]=x
 		self.glimmer[1]=y
 	def askGlimmer(self,x,y):
-		print("Why am i even here?", self.glimmer[0])
+		#print("Why am i even here?", self.glimmer[0])
 		if self.glimmer[0]==x and self.glimmer[1]==y:
 			return True
 
@@ -146,7 +162,7 @@ class KnowledgeBase():
 		x=int(0)
 		#print(int(len(self.pathMap)))
 		y=int(10)
-		while y<=0:
+		while y>=0:
 			y-=1
 			############3ami eikhane ektu genjam korsi... last the e asha uchit chilo#########
 			tempStr=""
@@ -159,6 +175,9 @@ class KnowledgeBase():
 				if lastX==x and lastY==y:
 					#print(x,",",y)
 					tempStr+="o "
+					self.screen.blit(self.agent, (y*self.rectangleWidth, x*self.rectangleHeight+self.rectangleHeight)) 
+					pygame.display.update()
+					pygame.time.wait(1000)
 				elif self.pathMap[x][y]>0:
 					tempStr+="+ "
 				elif self.obstacleMap[x][y]>0:
@@ -170,6 +189,9 @@ class KnowledgeBase():
 					tempStr+="? "
 				elif self.wumpusMap[x][y]>= self.pitMap[x][y]:
 					tempStr+="w "
+					self.screen.blit(self.stench, (x*self.rectangleWidth, y*self.rectangleHeight+self.rectangleHeight)) 
+					pygame.display.update()
+					pygame.time.wait(1000)
 				elif self.pitMap[x][y]>0:
 					tempStr+="p "
 				else:

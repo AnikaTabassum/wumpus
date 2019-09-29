@@ -20,11 +20,17 @@ class Agent():
 		self.haveGold   = False;
 		self.glimmer= False;
 		self.game=""
+		self.screen=""
+		self.rectangleHeight=""
+		self.rectangleWidth=""
 		#self.quiver=WumpusWorldGenerator().numWmpi		
 		self.quiver=1
-	def start(self,Game):
+	def start(self,Game,screen,rectangleHeight,rectangleWidth):
 		self.game=Game
-		self.knowledgeBase=KnowledgeBase()
+		self.screen=screen
+		self.rectangleHeight=rectangleHeight
+		self.rectangleWidth=rectangleWidth
+		self.knowledgeBase=KnowledgeBase(screen,rectangleHeight,rectangleWidth)
 		self.direction=self.knowledgeBase.NORTH
 		print("position ",self.position[0],",",self.position[1])
 		self.knowledgeBase.registerMove(self.position[0],self.position[1])
@@ -36,7 +42,7 @@ class Agent():
 	def move(self):
 		#print("move")
 		if not self.game.moveAgent():
-			print("-----------------------telling bump-----------------------")
+			#print("-----------------------telling bump-----------------------")
 			self.knowledgeBase.tellBump(self.position[0],self.position[1],self.direction)
 			return 
 		x=int(self.position[0])
@@ -44,29 +50,39 @@ class Agent():
 
 		self.knowledgeBase.registerMove(x,y)
 		self.processPercepts(x,y)
+		#print("here")
 
 	def processPercepts(self,x,y):
-		print("perceive",self.glimmer)
+		#print("perceive",self.glimmer)
 		if self.glimmer:
-
+		
 			self.knowledgeBase.tellGlimmer(x,y)
 			#sys.exit()
 		if not self.breeze and not self.stench:
+			
 			self.knowledgeBase.tellClear(x,y)
+		
 			return 
-		print("breeze ",self.breeze)
+		#print("breeze ",self.breeze)
 		if self.breeze:
+			
 			self.knowledgeBase.tellBreeze(x,y)
-		print("stench ",self.stench)
+		#print("stench ",self.stench)
 		if self.stench:
+			#print("addddddddddd")
 			self.knowledgeBase.tellStench(x,y)
+		#print("pepepep")
 	def setDirection(self, directionanika):
 		print('direction anika', directionanika)
 		self.direction=directionanika
 	def turn(self, direction):
-		print("direction in agent ",direction)
+		#print("direction in agent ",direction)
 		self.game.turnAgent(direction)
+		
 		self.knowledgeBase.registerTurn(direction)
+		print("hhhhrrrrrrriiiiiiiiiiiiiddddddddiiiiiiiiiiiiiiiittttttttaaaaaaaaaaaa")
+	def turnForLookback(self, direction):
+		self.game.turnAgent(direction)
 	def setPosition(self, position, direction):
 		self.agentt.position[0]=self.agentt.position[0]+self.agentt.direction[0]
 		self.agentt.position[1]=self.agentt.position[1]+self.agentt.direction[1]
@@ -79,26 +95,40 @@ class Agent():
 	def placeStench(self,flag):
 		self.stench=flag
 	def shoot(self):
-		quiver-=1
+		self.quiver-=1
 		print("agent loosed the arrow")
-		game.processShot()
-		self.processPercepts(position[0], position[1])
+		self.game.processShot()
+		self.processPercepts(self.position[0], self.position[1])
 
 	def pickUp(self):
 		self.game.agentGrabsGold()
 		print("agent picked up the gold")
+		print("score is ", self.game.getScore())
+		pygame.time.wait(9000)
+		sys.exit()
+
+	def oppositeDirection(self,direction):
+		if direction==self.knowledgeBase.NORTH:
+			return self.knowledgeBase.SOUTH
+		elif direction==self.knowledgeBase.SOUTH:
+			return self.knowledgeBase.NORTH
+		elif direction==self.knowledgeBase.EAST:
+			return self.knowledgeBase.WEST
+		elif direction==self.knowledgeBase.WEST:
+			return self.knowledgeBase.EAST
 
 	def backTrack(self, moveStack,riskFactor):
 		print("backtrack")
 		i=int(self.lookback(riskFactor))
-		print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ",i)
-		print("move ", moveStack)
+		#print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ",i)
+		#print("move ", moveStack)
 		if i<0:
 			return False
 		#moveStacking=self.knowledgeBase.returnMoveStack()
 		cell= moveStack[i]
 		print("Backtracking to [",cell[0],", ",cell[1],"]")
-		tempMoveStack=self.knowledgeBase.returnMoveStack()
+		#tempMoveStack=self.knowledgeBase.returnMoveStack()
+		tempMoveStack=moveStack
 		tempTurnStack=self.knowledgeBase.returnTurnStack()
 		print("moveStack size ", len(tempMoveStack), "tempTurnStack size ", len(tempTurnStack))
 
@@ -107,22 +137,31 @@ class Agent():
 			self.turn(self.LEFT)
 			self.turn(self.LEFT)
 			self.move()
-
+			#print("try")
 			while self.position[0]!= cell[0] or self.position[1]!= cell[1]:
 				nextMove=tempMoveStack[len(tempMoveStack)-1]
-				if self.position[0]+self.direction[0]== nextMove[0] and \
-				self.position[1]+ self.direction[1]==nextMove[1]:
+				oppDir=self.oppositeDirection(self.direction)
+				#print("direction in infer ", oppDir[0],",",oppDir[1] )
+				if self.position[0]+oppDir[0]== nextMove[0] and \
+				self.position[1]+ oppDir[1]==nextMove[1]:
 					self.move()
-					tempMoveStack.pop(tempMoveStack[len(tempMoveStack)-1])
+					#print("try-2")
+					#print(tempMoveStack[len(tempMoveStack)-1])
+					tempMoveStack.pop(len(tempMoveStack)-1)
+					#print("mara")
 				else:
-					print("backtrack er else")
+					#print("backtrack er else")
 					turnnn=int(tempTurnStack[len(tempTurnStack)-1])
 					if turnnn==self.LEFT:
 						self.turn(self.RIGHT)
-						tempTurnStack.pop(tempTurnStack[len(tempTurnStack)-1])
+						#print("aaaaaaaaannnnnnnnnnniiiiiiiiiiiiiiiiiiiiiikkkkkkkkkkkkkkaaaaaaaaaaa")
+						tempTurnStack.pop(len(tempTurnStack)-1)
+						break
 					elif turnnn== self.RIGHT:
 						self.turn(self.LEFT)
-						tempTurnStack.pop(tempTurnStack[len(tempTurnStack)-1])
+						#print("5555555555555555555555555555555555555555555555555555555555555555")
+						tempTurnStack.pop(len(tempTurnStack)-1)
+						break
 
 			return True
 		except IndexError:
@@ -133,20 +172,25 @@ class Agent():
 		##eita likhbo
 		i=int(0)
 		moveStacking=self.knowledgeBase.returnMoveStack()
-		print("riskfaactor in lookback ",riskFactor, len(moveStacking)-1)
+		#print("riskfaactor in lookback ",riskFactor, len(moveStacking)-1)
 		i=int(len(moveStacking))
-		while i<=0:
+		while i>=0:
+			#print("-------------------while i------------------------------------ ", i)			
 			i-=1
-			m=self.knowledgeBase.moveStack[i]
+			m=moveStacking[i]
+			#print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm ",m)
 			for d in self.knowledgeBase.DIRECTIONS:
 				x=int(m[0]+d[0])
 				y=int(m[1]+d[1])
+				#print("Directions in lookback ", x,",",y )
 
-				if self.knowledgeBase.askPath(x,y) ==0 and self.knowledgeBase.askObstacle(x,y)<=0:
-					if self.knowledgeBase.askWumpus(x,y)+self.knowledgeBase.askPit(x,y)<=riskFactor:
-						print("Lookback succeded")
+				if self.knowledgeBase.askPath(x,y) !=0 and self.knowledgeBase.askObstacle(x,y)<=0:
+					#print("if if if if  ", x,",",y )
+					#print("if er vitor if er if ",x,",",y, self.knowledgeBase.askWumpus(x,y))
+					if (self.knowledgeBase.askWumpus(x,y)+self.knowledgeBase.askPit(x,y))<=riskFactor:
+						#print("Lookback succeded")
 						return i
-		print("Lookback failed")
+		#print("Lookback failed")
 		return -1
 
 
@@ -154,8 +198,6 @@ class Agent():
 	def infer(self):
 
 		###eita most important
-
-		
 		if self.knowledgeBase.askGlimmer(self.position[0],self.position[1]):
 			print("infer glimmer")
 			self.pickUp()
@@ -250,26 +292,27 @@ class Agent():
 
 			if forwardScore<=riskFactor and forwardScore<=leftScore and forwardScore<=rightScore:
 				self.move()
-				print("move if -1")
+				#print("move if -1")
 				self.knowledgeBase.printing()
 				return 
 			elif leftScore<= riskFactor and leftScore <= rightScore:
 				self.turn(self.LEFT)
 				#print("check")
 				self.move()
-				print("move if -2")
+				#print("move if -2")
 				self.knowledgeBase.printing()
 				return 
 			elif rightScore<=riskFactor:
 				self.turn(self.RIGHT)
 				#print("check")
 				self.move()
-				print("move if -3")
+				#print("move if -3")
 				self.knowledgeBase.printing()
 				return
 			else:
-				print("-----------------check-------------------------")
+				#print("-----------------check-------------------------")
 				moveStacking=self.knowledgeBase.returnMoveStack()
+				#print("oononononono")
 				backTracked=self.backTrack(moveStacking,riskFactor)
 				if backTracked:
 					print("\tbacktracked")
