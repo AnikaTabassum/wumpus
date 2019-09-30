@@ -175,9 +175,7 @@ class KnowledgeBase():
 				if lastX==x and lastY==y:
 					#print(x,",",y)
 					tempStr+="o "
-					self.screen.blit(self.agent, (y*self.rectangleWidth, x*self.rectangleHeight+self.rectangleHeight)) 
-					pygame.display.update()
-					pygame.time.wait(1000)
+					
 				elif self.pathMap[x][y]>0:
 					tempStr+="+ "
 				elif self.obstacleMap[x][y]>0:
@@ -189,9 +187,7 @@ class KnowledgeBase():
 					tempStr+="? "
 				elif self.wumpusMap[x][y]>= self.pitMap[x][y]:
 					tempStr+="w "
-					self.screen.blit(self.stench, (x*self.rectangleWidth, y*self.rectangleHeight+self.rectangleHeight)) 
-					pygame.display.update()
-					pygame.time.wait(1000)
+					
 				elif self.pitMap[x][y]>0:
 					tempStr+="p "
 				else:
@@ -208,7 +204,10 @@ class KnowledgeBase():
 			amiami+=" "+str(i)
 		print(amiami)
 		
-					
+			
+	
+
+
 					
 
 #lastX=moveStack[len(moveStack)-1][0]

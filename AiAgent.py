@@ -23,6 +23,8 @@ class Agent():
 		self.screen=""
 		self.rectangleHeight=""
 		self.rectangleWidth=""
+		self.back=pygame.image.load(r'/home/anika/Downloads/back.jpg')
+		self.mirror=pygame.image.load(r'/home/anika/Downloads/mirroredagent.png')
 		#self.quiver=WumpusWorldGenerator().numWmpi		
 		self.quiver=1
 	def start(self,Game,screen,rectangleHeight,rectangleWidth):
@@ -52,6 +54,14 @@ class Agent():
 		self.processPercepts(x,y)
 		#print("here")
 
+	def getxy(self):
+		moveStack=self.knowledgeBase.returnMoveStack()
+		lastX=moveStack[len(moveStack)-1][0]
+		lastY=moveStack[len(moveStack)-1][1]
+		print(lastX)
+		print(lastY)
+		self.game.guiCreate(lastX,lastY)
+
 	def processPercepts(self,x,y):
 		#print("perceive",self.glimmer)
 		if self.glimmer:
@@ -80,7 +90,7 @@ class Agent():
 		self.game.turnAgent(direction)
 		
 		self.knowledgeBase.registerTurn(direction)
-		print("hhhhrrrrrrriiiiiiiiiiiiiddddddddiiiiiiiiiiiiiiiittttttttaaaaaaaaaaaa")
+		#print("hhhhrrrrrrriiiiiiiiiiiiiddddddddiiiiiiiiiiiiiiiittttttttaaaaaaaaaaaa")
 	def turnForLookback(self, direction):
 		self.game.turnAgent(direction)
 	def setPosition(self, position, direction):
@@ -104,7 +114,7 @@ class Agent():
 		self.game.agentGrabsGold()
 		print("agent picked up the gold")
 		print("score is ", self.game.getScore())
-		pygame.time.wait(9000)
+		pygame.time.wait(5000)
 		sys.exit()
 
 	def oppositeDirection(self,direction):
@@ -126,7 +136,10 @@ class Agent():
 			return False
 		#moveStacking=self.knowledgeBase.returnMoveStack()
 		cell= moveStack[i]
-		print("Backtracking to [",cell[0],", ",cell[1],"]")
+		print("-----------------------------Backtracking to [",cell[0],", ",cell[1],"]")
+		self.screen.blit(self.back, (cell[1]*self.rectangleWidth, cell[0]*self.rectangleHeight+self.rectangleHeight)) 
+		pygame.display.update()
+		pygame.time.wait(1000)
 		#tempMoveStack=self.knowledgeBase.returnMoveStack()
 		tempMoveStack=moveStack
 		tempTurnStack=self.knowledgeBase.returnTurnStack()
@@ -294,6 +307,7 @@ class Agent():
 				self.move()
 				#print("move if -1")
 				self.knowledgeBase.printing()
+				self.getxy()
 				return 
 			elif leftScore<= riskFactor and leftScore <= rightScore:
 				self.turn(self.LEFT)
@@ -301,6 +315,7 @@ class Agent():
 				self.move()
 				#print("move if -2")
 				self.knowledgeBase.printing()
+				self.getxy()
 				return 
 			elif rightScore<=riskFactor:
 				self.turn(self.RIGHT)
@@ -308,6 +323,7 @@ class Agent():
 				self.move()
 				#print("move if -3")
 				self.knowledgeBase.printing()
+				self.getxy()
 				return
 			else:
 				#print("-----------------check-------------------------")

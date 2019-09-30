@@ -10,8 +10,8 @@ class Game():
 		#self.knowledgeBase=KnowledgeBase()
 		self.agentt=agent
 		self.wwg=WumpusWorldGenerator()
-		#self.world=self.wwg.generateWorld(size,wumpusProb, pitProb, obsProb)
-		self.world=self.wwg.generatePredefinedWorld(size,wumpusProb, pitProb, obsProb)
+		self.world=self.wwg.generateWorld(size,wumpusProb, pitProb, obsProb)
+		#self.world=self.wwg.generatePredefinedWorld(size,wumpusProb, pitProb, obsProb)
 		self.agentt.position = self.wwg.startingPosition
 		self.score=1000
 		self.gameOver=False
@@ -19,8 +19,12 @@ class Game():
 		self.screen=screen
 		self.rectangleHeight=rectangleHeight
 		self.rectangleWidth=rectangleWidth
+		self.agent=pygame.image.load(r'/home/anika/Downloads/agent.png')
 		self.goldpic = pygame.image.load(r'/home/anika/Downloads/gold.png')
-
+		self.stench = pygame.image.load(r'/home/anika/Downloads/stench.jpg')
+		self.breeze = pygame.image.load(r'/home/anika/Downloads/breeze.png')
+		self.wumpus = pygame.image.load(r'/home/anika/Downloads/wumpus.png')
+		self.visited=[[0 for x in range(12)] for y in range(12)]
 	def getScore(self):
 		return self.score
 
@@ -206,7 +210,7 @@ class Game():
 			winner="You have won the game!! score: "+str(self.getScore())
 			label = font.render(winner, 1, red)
 			self.screen.blit(label, (30,10))
-			self.screen.blit(self.goldpic, (c*self.rectangleWidth, r*self.rectangleHeight+self.rectangleHeight)) 
+			self.screen.blit(self.goldpic, (r*self.rectangleWidth, c*self.rectangleHeight+self.rectangleHeight)) 
 			pygame.display.update()
 			pygame.mixer.init()
 			pygame.mixer.music.load(file)
@@ -219,6 +223,88 @@ class Game():
 		else:
 			print("Gold nai gold nai.. faka she cell :)")
 
+
+	def guiCreate(self,lastx,lasty):
+
+		for i in range(len(self.world)):
+			#print(i)
+			for j in range(len(self.world)):
+				if i==lastx and j==lasty :
+					self.visited[i][j]=1
+					self.screen.blit(self.agent, (j*self.rectangleWidth, i*self.rectangleHeight+self.rectangleHeight)) 
+					print("gggggggggguuuuuuiiiiiiiiiiiiiiiiiii ",i,",",j)
+					listadj=self.getAdjCellList(i,j)
+					for k in range(len(listadj)):
+						f=listadj[k][0]
+						l=listadj[k][1]
+						print(f,l)
+						if self.world[f][l]==2:
+							self.screen.blit(self.stench, (j*self.rectangleWidth, i*self.rectangleHeight+self.rectangleHeight)) 
+							pygame.display.update()
+							pygame.time.wait(1000)
+					pygame.display.update()
+					pygame.time.wait(1000)
+
+
+	def getAdjCellList(self,r,c):
+		listAdj=[]
+		if r==0 and c==0:
+			listAdj.append([r,c+1])
+			listAdj.append([r+1,c])
+
+		elif r==0 and c==9:
+			listAdj.append([r,c-1])
+			listAdj.append([r+1,c])
+
+		elif r==9 and c==0:
+			listAdj.append([r,c+1])
+			listAdj.append([r-1,c])
+
+		elif r==9 and c==9:
+			listAdj.append([r-1,c])
+			listAdj.append([r,c-1])
+
+		elif r==0:
+			listAdj.append([r,c+1])
+			listAdj.append([r,c-1])
+			listAdj.append([r+1,c])
+
+		elif r==9:
+			listAdj.append([r,c+1])
+			listAdj.append([r,c-1])
+			listAdj.append([r-1,c])
+
+		elif c==0:
+			listAdj.append([r-1,c])
+			listAdj.append([r,c+1])
+			listAdj.append([r+1,c])
+
+		elif c==9:
+			listAdj.append([r-1,c])
+			listAdj.append([r+1,c])
+			listAdj.append([r,c-1])
+
+
+
+		else:
+			listAdj.append([r,c+1])
+			listAdj.append([r,c-1])
+			listAdj.append([r-1,c])
+			listAdj.append([r+1,c])
+
+		return listAdj
+
+	def getAdjacent(self, i, j):
+		if i>0 and j>0:
+			left=self.world[i-1][j]
+			right=self.world[i+1][j]
+			up=self.world[i][j-1]
+			down=self.world[i][j+1]
+		if i>0 and j>0:
+			left=self.world[i-1][j]
+			right=self.world[i+1][j]
+			up=self.world[i][j-1]
+			down=self.world[i][j+1]
 
 
 
