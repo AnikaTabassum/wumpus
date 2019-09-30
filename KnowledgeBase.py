@@ -57,7 +57,7 @@ class KnowledgeBase():
 		if self.pathMap[x][y]==0:
 			move=[x,y]
 			self.moveStack.append(move)
-		print("reg ",self.moveStack[len(self.moveStack)-1])
+		#print("reg ",self.moveStack[len(self.moveStack)-1])
 		self.wumpusMap[x][y]=self.CLEAR
 		self.pitMap[x][y]=self.CLEAR
 		self.obstacleMap[x][y]=self.CLEAR
@@ -102,7 +102,7 @@ class KnowledgeBase():
 
 	def askWumpus(self, x,y):
 		try:
-			print("askWumpus ","x: ",x,"y: ",y,self.wumpusMap[x][y])
+			#print("askWumpus ","x: ",x,"y: ",y,self.wumpusMap[x][y])
 			return self.wumpusMap[x][y]
 		except IndexError:
 			return 100
@@ -111,11 +111,11 @@ class KnowledgeBase():
 	def tellBreeze(self,x,y):
 		if self.pathMap[x][y]<=1:
 			self.perceive(x,y,self.pitMap,2)
-			print("+++++++++++++++++++++++++++++++++++++++++tellbreeze ",x,",",y, "ddhqiued", self.pitMap[x][y])
+			#print("+++++++++++++++++++++++++++++++++++++++++tellbreeze ",x,",",y, "ddhqiued", self.pitMap[x][y])
 
 	def askPit(self,x,y):
 		try:
-			print("askpit ","x: ",x,"y: ",y,self.pitMap[x][y])
+			#print("askpit ","x: ",x,"y: ",y,self.pitMap[x][y])
 			return self.pitMap[x][y]
 		except IndexError:
 			return 100

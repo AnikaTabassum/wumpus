@@ -12,13 +12,13 @@ class WumpusWorldGenerator():
 		self.populateWorld(wumpusWorld,wumpusProb,pitProb,obstacleProb)
 		self.placeGold(wumpusWorld)
 		self.setStartLocation(wumpusWorld)
-		print("wumpus world ",wumpusWorld)
+		#print("wumpus world ",wumpusWorld)
 		return wumpusWorld
 
 	def generatePredefinedWorld(self,size,wumpusWorld,pitProb,obstacleProb):
 		wumpusWorld=[[0 for x in range(size+2)] for y in range(size+2)]
 		self.populateWorldManually(wumpusWorld)
-		print("manual ", wumpusWorld)
+		#print("manual ", wumpusWorld)
 		return wumpusWorld
 
 	def populateWorldManually(self,wumpusWorld):

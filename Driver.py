@@ -4,6 +4,8 @@ from AiAgent import Agent
 import pygame
 class Driver:
 	def run(self):
+		inp=input("Enter 1 for predefined, 2 for random world")
+		inp=int(inp)
 		ge=GameOverException()
 		agent=Agent()
 		dimension=int(10)
@@ -29,7 +31,7 @@ class Driver:
 				pygame.draw.rect(screen, khaki, (c*rectangleWidth, r*rectangleHeight+rectangleHeight, rectangleWidth, rectangleHeight))
 				pygame.draw.rect(screen, darkOliveGreen, (c*rectangleWidth-1, r*rectangleHeight+rectangleHeight-1, rectangleWidth-1, rectangleHeight-1))
 				pygame.display.update()
-		game=Game(agent,dimension,wumpusProb,pitProb,obsProb,screen,rectangleHeight,rectangleWidth)
+		game=Game(agent,dimension,wumpusProb,pitProb,obsProb,screen,rectangleHeight,rectangleWidth,inp)
 		try:
 			agent.start(game,screen,rectangleHeight,rectangleWidth)
 		except Exception as e:

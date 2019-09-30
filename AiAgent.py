@@ -6,7 +6,7 @@ from WumpusWorldGenerator import WumpusWorldGenerator
 class Agent():
 
 	def __init__(self):
-		print("Agent initiaated")
+		#print("Agent initiaated")
 		self.knowledgeBase=""
 		self.LEFT=int(0)
 		self.RIGHT=int(1)
@@ -34,7 +34,7 @@ class Agent():
 		self.rectangleWidth=rectangleWidth
 		self.knowledgeBase=KnowledgeBase(screen,rectangleHeight,rectangleWidth)
 		self.direction=self.knowledgeBase.NORTH
-		print("position ",self.position[0],",",self.position[1])
+		#print("position ",self.position[0],",",self.position[1])
 		self.knowledgeBase.registerMove(self.position[0],self.position[1])
 		i=int (0)
 		while True:
@@ -58,8 +58,8 @@ class Agent():
 		moveStack=self.knowledgeBase.returnMoveStack()
 		lastX=moveStack[len(moveStack)-1][0]
 		lastY=moveStack[len(moveStack)-1][1]
-		print(lastX)
-		print(lastY)
+		#print(lastX)
+		#print(lastY)
 		self.game.guiCreate(lastX,lastY)
 
 	def processPercepts(self,x,y):
@@ -83,7 +83,7 @@ class Agent():
 			self.knowledgeBase.tellStench(x,y)
 		#print("pepepep")
 	def setDirection(self, directionanika):
-		print('direction anika', directionanika)
+		#print('direction anika', directionanika)
 		self.direction=directionanika
 	def turn(self, direction):
 		#print("direction in agent ",direction)
@@ -128,7 +128,7 @@ class Agent():
 			return self.knowledgeBase.EAST
 
 	def backTrack(self, moveStack,riskFactor):
-		print("backtrack")
+		#print("backtrack")
 		i=int(self.lookback(riskFactor))
 		#print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ",i)
 		#print("move ", moveStack)
@@ -136,17 +136,17 @@ class Agent():
 			return False
 		#moveStacking=self.knowledgeBase.returnMoveStack()
 		cell= moveStack[i]
-		print("-----------------------------Backtracking to [",cell[0],", ",cell[1],"]")
+		#print("-----------------------------Backtracking to [",cell[0],", ",cell[1],"]")
 		self.screen.blit(self.back, (cell[1]*self.rectangleWidth, cell[0]*self.rectangleHeight+self.rectangleHeight)) 
 		pygame.display.update()
 		pygame.time.wait(1000)
 		#tempMoveStack=self.knowledgeBase.returnMoveStack()
 		tempMoveStack=moveStack
 		tempTurnStack=self.knowledgeBase.returnTurnStack()
-		print("moveStack size ", len(tempMoveStack), "tempTurnStack size ", len(tempTurnStack))
+		#print("moveStack size ", len(tempMoveStack), "tempTurnStack size ", len(tempTurnStack))
 
 		try:
-			print("try in backTrack")
+			#print("try in backTrack")
 			self.turn(self.LEFT)
 			self.turn(self.LEFT)
 			self.move()
@@ -178,7 +178,7 @@ class Agent():
 
 			return True
 		except IndexError:
-			print("inenenene")
+			#print("inenenene")
 			return False
 
 	def lookback(self, riskFactor):
@@ -212,7 +212,7 @@ class Agent():
 
 		###eita most important
 		if self.knowledgeBase.askGlimmer(self.position[0],self.position[1]):
-			print("infer glimmer")
+			#print("infer glimmer")
 			self.pickUp()
 			return 
 		'''except Exception as error:
@@ -246,9 +246,9 @@ class Agent():
 				self.knowledgeBase.askObstacle(self.position[0]-1, self.position[1])+\
 				self.knowledgeBase.askPath(self.position[0]-1, self.position[1])
 
-				print("NORTH", forwardScore," ", leftScore," ",rightScore)
+				#print("NORTH", forwardScore," ", leftScore," ",rightScore)
 			elif self.direction==self.knowledgeBase.SOUTH:
-				print("SOUTH")
+				#print("SOUTH")
 				forwardScore=self.knowledgeBase.askWumpus(self.position[0], self.position[1]-1)+\
 				self.knowledgeBase.askPit(self.position[0], self.position[1]-1)+\
 				self.knowledgeBase.askObstacle(self.position[0], self.position[1]-1)+\
@@ -265,7 +265,7 @@ class Agent():
 				self.knowledgeBase.askPath(self.position[0]+1, self.position[1])
 
 			elif self.direction==self.knowledgeBase.EAST:
-				print("EAST")
+				#print("EAST")
 				forwardScore=self.knowledgeBase.askWumpus(self.position[0]+1, self.position[1])+\
 				self.knowledgeBase.askPit(self.position[0]+1, self.position[1])+\
 				self.knowledgeBase.askObstacle(self.position[0]+1, self.position[1])+\
@@ -282,7 +282,7 @@ class Agent():
 				self.knowledgeBase.askPath(self.position[0], self.position[1]+1)
 
 			elif self.direction==self.knowledgeBase.WEST:
-				print("WEST")
+				#print("WEST")
 				forwardScore=self.knowledgeBase.askWumpus(self.position[0]-1, self.position[1])+\
 				self.knowledgeBase.askPit(self.position[0]-1, self.position[1])+\
 				self.knowledgeBase.askObstacle(self.position[0]-1, self.position[1])+\

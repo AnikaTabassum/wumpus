@@ -5,13 +5,15 @@ import sys
 import pygame
 class Game():
 
-	def __init__(self, agent,size, wumpusProb, pitProb, obsProb,screen, rectangleHeight,rectangleWidth):
+	def __init__(self, agent,size, wumpusProb, pitProb, obsProb,screen, rectangleHeight,rectangleWidth,inp):
 		print("Game initiated")
 		#self.knowledgeBase=KnowledgeBase()
 		self.agentt=agent
 		self.wwg=WumpusWorldGenerator()
-		self.world=self.wwg.generateWorld(size,wumpusProb, pitProb, obsProb)
-		#self.world=self.wwg.generatePredefinedWorld(size,wumpusProb, pitProb, obsProb)
+		if inp==1:
+			self.world=self.wwg.generatePredefinedWorld(size,wumpusProb, pitProb, obsProb)
+		else:
+			self.world=self.wwg.generateWorld(size,wumpusProb, pitProb, obsProb)
 		self.agentt.position = self.wwg.startingPosition
 		self.score=1000
 		self.gameOver=False
@@ -40,8 +42,20 @@ class Game():
 			self.score-=1000
 			self.agentt.died=True
 			self.gameOver=True
+			red = (255,0,0)
+			font =pygame.font.SysFont("comicsansms", 70)
+			winner="Agent has lost the game!! score: "+str(self.getScore())
+			label = font.render(winner, 1, red)
+			self.screen.blit(label, (30,10))
 			print("score is ", self.getScore())
-			pygame.time.wait(9000)
+			pygame.display.update()
+			file = '/home/anika/Downloads/failing.mp3'
+			pygame.mixer.init()
+			pygame.mixer.music.load(file)
+			pygame.mixer.music.play()
+			while pygame.mixer.music.get_busy(): 
+				pygame.time.Clock().tick(10)
+			pygame.time.wait(5000)
 			sys.exit()
 			self.ge.exception(False)
 		#print("direction ",self.agentt.direction)
@@ -84,7 +98,7 @@ class Game():
 		else:
 			self.agentt.placeGlimmer(False)
 			#self.agentt.glimmer=False
-		print("move agents after ", self.agentt.position[0],",",self.agentt.position[1])
+		#print("move agents after ", self.agentt.position[0],",",self.agentt.position[1])
 		self.score-=1
 
 		return True
@@ -207,12 +221,13 @@ class Game():
 			r=self.agentt.position[1]
 			red = (255,0,0)
 			font =pygame.font.SysFont("comicsansms", 70)
-			winner="You have won the game!! score: "+str(self.getScore())
+			winner="Agent has won the game!! score: "+str(self.getScore())
 			label = font.render(winner, 1, red)
 			self.screen.blit(label, (30,10))
 			self.screen.blit(self.goldpic, (r*self.rectangleWidth, c*self.rectangleHeight+self.rectangleHeight)) 
 			pygame.display.update()
 			pygame.mixer.init()
+
 			pygame.mixer.music.load(file)
 			pygame.mixer.music.play()
 			while pygame.mixer.music.get_busy(): 
@@ -232,14 +247,18 @@ class Game():
 				if i==lastx and j==lasty :
 					self.visited[i][j]=1
 					self.screen.blit(self.agent, (j*self.rectangleWidth, i*self.rectangleHeight+self.rectangleHeight)) 
-					print("gggggggggguuuuuuiiiiiiiiiiiiiiiiiii ",i,",",j)
+					#print("gggggggggguuuuuuiiiiiiiiiiiiiiiiiii ",i,",",j)
 					listadj=self.getAdjCellList(i,j)
 					for k in range(len(listadj)):
 						f=listadj[k][0]
 						l=listadj[k][1]
-						print(f,l)
+						#print(f,l)
 						if self.world[f][l]==2:
-							self.screen.blit(self.stench, (j*self.rectangleWidth, i*self.rectangleHeight+self.rectangleHeight)) 
+							self.screen.blit(self.stench, (j*self.rectangleWidth+30, i*self.rectangleHeight+self.rectangleHeight+40)) 
+							pygame.display.update()
+							pygame.time.wait(1000)
+						if self.world[f][l]==1:
+							self.screen.blit(self.breeze, (j*self.rectangleWidth+30, i*self.rectangleHeight+self.rectangleHeight+40)) 
 							pygame.display.update()
 							pygame.time.wait(1000)
 					pygame.display.update()
